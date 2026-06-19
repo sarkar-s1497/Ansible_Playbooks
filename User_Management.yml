@@ -1,0 +1,52 @@
+---
+
+ - name: To Check for user is present or not, If not then create the user.
+   hosts: Master_Node
+   become: true
+   
+   vars:
+   
+    users:
+	 - {name: 'user1_adm', is_sudo: yes}
+	 - {name: 'user2_demo', is_sudo: no}
+	 - {name: 'user3_demo', is_sudo: no}
+	 - {name: 'user4_demo', is_sudo: no}
+   
+   tasks:
+   
+    - name: Check for user and create if not present
+	  user:
+	   name: '{{item.name}}'
+	   shell: /bin/bash
+	   state: present
+	   with_items: "{{users}}"
+	
+
+################## Either we can add in sudoers.d directory #######################	
+	- name: Add entry in /etc/sudoers.d Directory
+	  copy:
+		content: "{{item.name}}	ALL=(ALL)	NOPASSWD: ALL\n"
+		dest: /etc/sudoers.d/{{item.name}}
+		owner: root
+		group: root
+		mode: '0440'
+		validate: /usr/sbin/visudo -cf %s
+		with_items: "{{ users }}"
+
+################## Or we can add in sudoers file directly #####################
+#	- name: Add endtry in /etc/sudoers file
+#	   lineinfile:
+#	    path: /etc/sudoers
+#		regexp: '^{{item.name}}\s'          
+
+##'^' (Start of line): Ensures the line starts with the username, 
+##'\s' (Whitespace): Ensures there is a space or tab immediately after the username.
+		
+#		line: "{{item.name}}	ALL=(ALL)	NOPASSWD: ALL\n"
+#		validate: /usr/sbin/visudo -cf %s
+		
+		whem item.is_sudo == true
+		
+		
+		  
+...
