@@ -45,7 +45,7 @@
 #		line: "{{item.name}}	ALL=(ALL)	NOPASSWD: ALL\n"
 #		validate: /usr/sbin/visudo -cf %s
 		
-		whem item.is_sudo == true
+		when item.is_sudo == true
 		
 		
 		  
